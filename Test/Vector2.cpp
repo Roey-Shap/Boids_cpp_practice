@@ -15,6 +15,12 @@ Vector2::Vector2(float x, float y)
 	this->y = y;
 }
 
+Vector2::Vector2(float t)
+{
+	x = t;
+	y = t;
+}
+
 Vector2::Vector2()
 {
 	x = 0.0;
@@ -152,13 +158,13 @@ const Vector2 Vector2::Vector2Random(const Vector2& min, const Vector2& max)
 	return Vector2(min.x + negMod(rand(), max.x), min.y + negMod(rand(), max.y));
 }
 
-bool Vector2::pointInRect(Vector2* point, Vector2* topLeft, Vector2* bottomRight)
+bool Vector2::pointInRect(Vector2 point, Vector2 topLeft, Vector2 bottomRight)
 {
-	return point->x <= bottomRight->x && point->x >= topLeft->x && point->y <= bottomRight->y && point->y >= topLeft->y;
+	return point.x <= bottomRight.x && point.x >= topLeft.x && point.y <= bottomRight.y && point.y >= topLeft.y;
 }
 
-bool Vector2::RectanglesIntersect(Vector2* topLeft1, Vector2* bottomRight1, Vector2* topLeft2, Vector2* bottomRight2)
+bool Vector2::RectanglesIntersect(Vector2 topLeft1, Vector2 bottomRight1, Vector2 topLeft2, Vector2 bottomRight2)
 {
-	return topLeft1->x <= bottomRight2->x && bottomRight1->x >= topLeft2->x 
-		&& topLeft1->y <= bottomRight2->y && bottomRight1->y >= topLeft2->y;
+	return topLeft1.x <= bottomRight2.x && bottomRight1.x >= topLeft2.x 
+		&& topLeft1.y <= bottomRight2.y && bottomRight1.y >= topLeft2.y;
 }

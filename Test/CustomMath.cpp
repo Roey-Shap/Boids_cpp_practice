@@ -1,4 +1,5 @@
 #include <math.h>
+#include <random>
 
 float roundTo(float value, float snapValue)
 {
@@ -24,10 +25,19 @@ float map(float min1, float max1, float value, float min2, float max2)
     return (value * sizeRatio) - (min1 * sizeRatio) + min2;
 }
 
-
 float negMod(float x, float y)
 {
     float remainder = fmodf(x, y);
     remainder = remainder > 0 ? remainder : y + remainder;
     return remainder;
+}
+
+float randomRange(float min, float max)
+{
+    return min + negMod(rand(), max);
+}
+
+int randomRange(int min, int max)
+{
+    return min + negMod(rand(), max);
 }

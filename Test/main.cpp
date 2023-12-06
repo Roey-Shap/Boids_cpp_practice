@@ -16,12 +16,11 @@ using namespace std;
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 800
 
-#define NUM_BOIDS 1000
+#define NUM_BOIDS 2000
 
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Boids", sf::Style::Titlebar | sf::Style::Close);
-    //sf::Window::SetFramerateLimit(60
     window.setFramerateLimit(60);
 
     QuadTree* quadTree = NULL;
@@ -32,11 +31,7 @@ int main()
     const Vector2& spawnBoundsMin = Vector2(0, 0);
     const Vector2& spawnBoundsMax = Vector2(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    for (int i = 0; i < NUM_BOIDS; i++)
-    {
-        boids[i] = new Boid(Vector2::Vector2Random(spawnBoundsMin, spawnBoundsMax));
-        //cout << i << ": " << boids[i]->getPosition().x << ", " << boids[i]->getPosition().y << "\n";
-    }
+    int numExistingBoids = 0;
 
     const Vector2& offset = Vector2(0, 0);
     float fps;
@@ -46,13 +41,32 @@ int main()
 
     while (window.isOpen())
     {
-
-
         sf::Event event;
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
+            {
                 window.close();
+            }
+
+            if (event.type == sf::Event::MouseButtonReleased)
+            {
+                int randNumBoids = randomRange(10, 20);
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                cout << mousePos.x << ":" << mousePos.y;
+                Vector2* mousePosVec = new Vector2(mousePos.x, mousePos.y);
+                Boid* spawnedBoid;
+
+                for (int i = 0; i < randNumBoids; i++)
+                {
+                    Vector2 ranPos = *mousePosVec + Vector2::Vector2Random(Vector2(-25), Vector2(25));
+                    spawnedBoid = new Boid(ranPos);
+                    boids[numExistingBoids + i] = spawnedBoid;
+                    spawnedBoid->detectEdges(Vector2(0, 0), Vector2(WINDOW_WIDTH, WINDOW_HEIGHT));
+                }
+
+                numExistingBoids += randNumBoids;
+            }
         }
 
         window.clear();
@@ -62,9 +76,9 @@ int main()
             delete quadTree;
         }
 
-        quadTree = new QuadTree(new Vector2(0, 0), new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT));
+        quadTree = new QuadTree(Vector2(0, 0), Vector2(WINDOW_WIDTH, WINDOW_HEIGHT));
 
-        for (int i = 0; i < NUM_BOIDS; i++)
+        for (int i = 0; i < numExistingBoids; i++)
         {
             quadTree->insertElement(boids[i]);
         }
@@ -72,7 +86,7 @@ int main()
 
 
         // update loop
-        for (int i = 0; i < NUM_BOIDS; i++)
+        for (int i = 0; i < numExistingBoids; i++)
         {
             boids[i]->flock();
             boids[i]->step();
@@ -82,7 +96,7 @@ int main()
         quadTree->draw(&window, offset);
 
         // draw loop
-        for (int i = 0; i < NUM_BOIDS; i++)
+        for (int i = 0; i < numExistingBoids; i++)
         {
             boids[i]->draw(&window, offset);
         }
@@ -101,12 +115,12 @@ int main()
 
         currentTime = clock.getElapsedTime();
         fps = 1.0f / (currentTime.asSeconds() - previousTime.asSeconds()); // the asSeconds returns a float
-        std::cout << "fps =" << floor(fps) << std::endl; // flooring it will make the frame rate a rounded number
+        std::cout << "fps = " << floor(fps) << std::endl; // flooring it will make the frame rate a rounded number
         previousTime = currentTime;
     }
 
     // call each boid's destructor
-    for (int i = 0; i < NUM_BOIDS; i++)
+    for (int i = 0; i < numExistingBoids; i++)
     {
         delete boids[i];
     }
@@ -115,15 +129,3 @@ int main()
 
     return 0;
 }
-
-/*
-int main()
-{
-    sf::Window window(sf::VideoMode(640, 480), "Boids", sf::Style::Titlebar | sf::Style::Close);
-    sf::Event event;
-
-
-    printf("Test!");
-    return 0;
-}
-*/

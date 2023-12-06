@@ -7,7 +7,7 @@
 
 #include <vector>
 
-using namespace std;
+using namespace std;    // apparently it's bad to do namespace std in a header file - how to avoid it though? The class predefinition thing?
 
 class Boid
 {
@@ -16,7 +16,6 @@ private:
 
     int id;
     Vector2 position;
-    float direction;
     Vector2 velocity;
     Vector2 acceleration;
     float perceptionRadius;
@@ -27,8 +26,7 @@ private:
     void* quadTree;
 public:
     void setPosition(Vector2 position);
-    Vector2* getPosition();
-    void setDirection(float direction);
+    Vector2 getPosition();
     void setVelocity(Vector2 velocity);
     void setPositionQueryStructure(void* quadTree);
     int getId();

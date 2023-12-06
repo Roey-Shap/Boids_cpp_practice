@@ -14,12 +14,11 @@ Boid::Boid(Vector2 spawnPosition)
 {
     id = Boid::boidGUIDCounter++;
     position = spawnPosition;
-    direction = 0.0;
     velocity = Vector2(0, 0);
     acceleration = Vector2(0, 0);
-    perceptionRadius = 350.0;
+    perceptionRadius = 100.0;
     velocityMax = 3.0;
-    maxAddableForce = 0.05; // 0.25;
+    maxAddableForce = 0.075;
     sf::CircleShape _drawShape(2.f);
     drawShape = _drawShape;
     drawShape.setFillColor(sf::Color::Green);
@@ -27,7 +26,16 @@ Boid::Boid(Vector2 spawnPosition)
 
 Boid::Boid()
 {
-    Boid(Vector2(0, 0));
+    id = Boid::boidGUIDCounter++;
+    position = Vector2(0, 0);
+    velocity = Vector2(0, 0);
+    acceleration = Vector2(0, 0);
+    perceptionRadius = 100.0;
+    velocityMax = 3.0;
+    maxAddableForce = 0.075;
+    sf::CircleShape _drawShape(2.f);
+    drawShape = _drawShape;
+    drawShape.setFillColor(sf::Color::Green);
 }
 
 void Boid::setPosition(Vector2 position)
@@ -35,9 +43,9 @@ void Boid::setPosition(Vector2 position)
     this->position = position;
 }
 
-Vector2* Boid::getPosition()
+Vector2 Boid::getPosition()
 {
-    return new Vector2(position.x, position.y);
+    return Vector2(position.x, position.y);
 }
 
 int Boid::getId()
@@ -45,13 +53,9 @@ int Boid::getId()
     return id;
 }
 
-void Boid::setDirection(float direction)
-{
-    this->direction = direction;
-}
-
 void Boid::setVelocity(Vector2 velocity)
 {
+    free(&(this->velocity));
     this->velocity = velocity;
 }
 
@@ -62,7 +66,7 @@ void Boid::setPositionQueryStructure(void* quadTree)
 
 void Boid::detectEdges(Vector2 boundsMin, Vector2 boundsMax)
 {
-    position = boundsMin + (position % boundsMax);
+    position = boundsMin + (position % boundsMax);   
 }
 
 
@@ -135,15 +139,15 @@ Vector2 Boid::steerTowardsNeighborAverage(vector<Boid*>* neighbors, int numNeigh
         steerForce = (steerForce.getNormalized() * velocityMax) - velocity;
         steerForce.clampLength(maxAddableForce);
     }
-
+    
     return steerForce;
 }
 
 void Boid::flock()
 {
     vector<Boid*>* quadTreeNeighbors = new vector<Boid*>;
-    Vector2 sightOffset = Vector2(perceptionRadius, perceptionRadius);
-    ((QuadTree*)quadTree)->queryRegionForElements(quadTreeNeighbors, (position - sightOffset).copy(), (position + sightOffset).copy());
+    Vector2 sightOffset = Vector2(perceptionRadius/2, perceptionRadius/2);
+    ((QuadTree*)quadTree)->queryRegionForElements(quadTreeNeighbors, position - sightOffset, position + sightOffset);
 
     int numNeighbors = quadTreeNeighbors->size();
     Vector2 alignment = alignWithNeighbors(quadTreeNeighbors, numNeighbors);
@@ -159,6 +163,8 @@ void Boid::flock()
     acceleration += alignment * 0.3;
     acceleration += cohesion * 0.8;
     acceleration -= separation * 0.8;
+
+    delete quadTreeNeighbors;
 }
 
 void Boid::step()

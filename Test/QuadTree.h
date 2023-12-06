@@ -18,8 +18,8 @@ using namespace std;
 class QuadTree
 {
 private:
-	Vector2* boundaryTopLeft;
-	Vector2* boundaryBottomRight;
+	Vector2 boundaryTopLeft;
+	Vector2 boundaryBottomRight;
 
 	Boid** elements;
 	int numElements;
@@ -41,13 +41,14 @@ public:
 
 	Boid** getElements();
 
-	void queryRegionForElements(vector<Boid*>* elementsFound, Vector2* topLeft, Vector2* bottomRight);
+	void queryRegionForElements(vector<Boid*>* elementsFound, Vector2 topLeft, Vector2 bottomRight);
 
 	void insertElement(Boid* element);
 	void subdivide();
 
 	void draw(sf::RenderWindow* window, const Vector2& offset);
 
-	const QuadTree(Vector2* topLeft, Vector2* bottomRight);
+	const QuadTree(Vector2 topLeft, Vector2 bottomRight);
 	QuadTree();
+	~QuadTree();
 };

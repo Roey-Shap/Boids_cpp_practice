@@ -33,7 +33,8 @@ public:
 	void clampLength(float length);
 	Vector2();
 	Vector2(float x, float y);
+	Vector2(float t);
 	static const Vector2 Vector2Random(const Vector2& min, const Vector2& max);
-	static bool pointInRect(Vector2* point, Vector2* topleft, Vector2* bottomRight);
-	static bool RectanglesIntersect(Vector2* topLeft1, Vector2* bottomRight1, Vector2* topLeft2, Vector2* bottomRight2);
+	static bool pointInRect(Vector2 point, Vector2 topleft, Vector2 bottomRight);
+	static bool RectanglesIntersect(Vector2 topLeft1, Vector2 bottomRight1, Vector2 topLeft2, Vector2 bottomRight2);
 };

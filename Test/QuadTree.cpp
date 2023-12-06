@@ -9,12 +9,12 @@
 using namespace std;
 
 
-QuadTree::QuadTree(Vector2* topLeft, Vector2* bottomRight)
+QuadTree::QuadTree(Vector2 topLeft, Vector2 bottomRight)
 {
-	boundaryTopLeft = topLeft->copy();
-	boundaryBottomRight = bottomRight->copy();
+	boundaryTopLeft = topLeft;
+	boundaryBottomRight = bottomRight;
 
-	elements = new Boid * [QuadTree::cellSplitThreshold];
+	elements = new Boid* [QuadTree::cellSplitThreshold];
 	numElements = 0;
 
 	haveDivided = false;
@@ -26,22 +26,35 @@ QuadTree::QuadTree(Vector2* topLeft, Vector2* bottomRight)
 
 QuadTree::QuadTree()
 {
-	QuadTree(new Vector2(0, 0), new Vector2(0, 0));
+	QuadTree(Vector2(0, 0), Vector2(0, 0));
+}
+
+QuadTree::~QuadTree()
+{
+	delete[] elements;
+
+	if (haveDivided)
+	{
+		delete northEast;
+		delete southEast;
+		delete southWest;
+		delete northWest;
+	}
 }
 
 Vector2 QuadTree::getTopLeft()
 {
-	return *(boundaryTopLeft->copy());
+	return boundaryTopLeft;
 }
 
 Vector2 QuadTree::getBottomRight()
 {
-	return *(boundaryBottomRight->copy());
+	return boundaryBottomRight;
 }
 
 Vector2 QuadTree::getDimensions()
 {
-	return (*boundaryBottomRight - *boundaryTopLeft);
+	return boundaryBottomRight - boundaryTopLeft;
 }
 
 int QuadTree::getNumElements()
@@ -67,19 +80,7 @@ bool QuadTree::getHaveDivided()
 
 void QuadTree::insertElement(Boid* element)
 {
-	//if (numElements > elementsArrayMaxSize)
-	//{
-	//	elementsArrayMaxSize *= 2;
-	//	Boid* newElements = new Boid[elementsArrayMaxSize];
-	//	for (int i = 0; i < elementsArrayMaxSize; i++)
-	//	{
-	//		newElements[i] = elements[i];
-	//	}
-
-	//	elements = newElements;
-	//}
-
-	if (!Vector2::pointInRect((element->getPosition()), boundaryTopLeft, boundaryBottomRight))
+	if (!Vector2::pointInRect(element->getPosition(), boundaryTopLeft, boundaryBottomRight))
 	{
 		return;
 	}
@@ -111,15 +112,17 @@ void QuadTree::subdivide()
 	haveDivided = true;
 
 	Vector2 dims = getDimensions();
-	Vector2 middle = (*boundaryTopLeft + *boundaryBottomRight) / 2;
+	Vector2 middle = (boundaryTopLeft + boundaryBottomRight) / 2;
 	Vector2 yOffset = Vector2(0, dims.y / 2);
-	northEast = new QuadTree((middle - yOffset).copy(), (*boundaryBottomRight - yOffset).copy());
-	southEast = new QuadTree(middle.copy(), boundaryBottomRight->copy());
-	southWest = new QuadTree((*boundaryTopLeft + yOffset).copy(), (middle + yOffset).copy());
-	northWest = new QuadTree(boundaryTopLeft->copy(), middle.copy());
+	northEast = new QuadTree(middle - yOffset, boundaryBottomRight - yOffset);
+	southEast = new QuadTree(middle, boundaryBottomRight);
+	southWest = new QuadTree(boundaryTopLeft + yOffset, middle + yOffset);
+	northWest = new QuadTree(boundaryTopLeft, middle);
+
+	
 }
 
-void QuadTree::queryRegionForElements(vector<Boid*>* foundElements, Vector2* topLeft, Vector2* bottomRight)
+void QuadTree::queryRegionForElements(vector<Boid*>* foundElements, Vector2 topLeft, Vector2 bottomRight)
 {
 	if (!Vector2::RectanglesIntersect(boundaryTopLeft, boundaryBottomRight, topLeft, bottomRight))
 	{
@@ -130,7 +133,7 @@ void QuadTree::queryRegionForElements(vector<Boid*>* foundElements, Vector2* top
 	for (int i = 0; i < numElements; i++)
 	{
 		Boid* element = elements[i];
-		if (Vector2::pointInRect(element->getPosition()->copy(), topLeft, bottomRight)) {
+		if (Vector2::pointInRect(element->getPosition(), topLeft, bottomRight)) {
 			foundElements->push_back(element);
 		}
 	}
@@ -150,7 +153,7 @@ void QuadTree::draw(sf::RenderWindow* window, const Vector2& offset)
 	Vector2 dims = getDimensions();
 	sf::Color fillColor(0, 0, 0, 0);
 	sf::RectangleShape drawRect(sf::Vector2f(dims.x - 2, dims.y - 2));
-	drawRect.setPosition(boundaryTopLeft->x + offset.x + 1, boundaryTopLeft->y + offset.y + 1);
+	drawRect.setPosition(boundaryTopLeft.x + offset.x + 1, boundaryTopLeft.y + offset.y + 1);
 	drawRect.setFillColor(fillColor);
 	drawRect.setOutlineColor(sf::Color(0, 0, 255, 255 * (numElements / 10.0)));
 	drawRect.setOutlineThickness(1);

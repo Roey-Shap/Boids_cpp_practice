@@ -1,4 +1,4 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(517,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (Test.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   QuadTree.cpp
-C:\Users\Roey Shapiro\Desktop\Programming\cpp\Test\Test\Test\QuadTree.cpp(155,52): warning C4244: 'argument': conversion from 'double' to 'sf::Uint8', possible loss of data
+C:\Users\Roey Shapiro\Desktop\Programming\cpp\Test\Test\Test\QuadTree.cpp(163,52): warning C4244: 'argument': conversion from 'double' to 'sf::Uint8', possible loss of data
   Test.vcxproj -> C:\Users\Roey Shapiro\Desktop\Programming\cpp\Test\Test\x64\Debug\TestBoids.exe
