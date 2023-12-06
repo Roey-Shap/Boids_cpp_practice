@@ -1,7 +1,11 @@
-﻿  QuadTree.cpp
-C:\Users\Roey Shapiro\Desktop\Programming\cpp\Test\Test\Test\QuadTree.cpp(161,52): warning C4244: 'argument': conversion from 'double' to 'sf::Uint8', possible loss of data
+﻿  CustomMath.cpp
+C:\Users\Roey Shapiro\Desktop\Programming\cpp\Test\Test\Test\CustomMath.cpp(5,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Roey Shapiro\Desktop\Programming\cpp\Test\Test\Test\CustomMath.cpp(41,29): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Roey Shapiro\Desktop\Programming\cpp\Test\Test\Test\CustomMath.cpp(46,33): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Roey Shapiro\Desktop\Programming\cpp\Test\Test\Test\CustomMath.cpp(46,29): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Roey Shapiro\Desktop\Programming\cpp\Test\Test\Test\CustomMath.cpp(46,16): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
   Generating code
-  3 of 133 functions ( 2.3%) were compiled, the rest were copied from previous compilation.
+  3 of 219 functions ( 1.4%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code

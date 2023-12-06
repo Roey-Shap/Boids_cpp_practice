@@ -31,6 +31,7 @@ public:
 	float length();
 	Vector2 getNormalized();
 	void clampLength(float length);
+	float angleDegrees();
 	Vector2();
 	Vector2(float x, float y);
 	Vector2(float t);

@@ -137,7 +137,9 @@
     <ClInclude Include="Boid.h" />
     <ClInclude Include="classTest.h" />
     <ClInclude Include="CustomMath.h" />
+    <ClInclude Include="Fonts.h" />
     <ClInclude Include="QuadTree.h" />
+    <ClInclude Include="TriangleShape.h" />
     <ClInclude Include="Vector2.h" />
   </ItemGroup>
   <ItemGroup>

@@ -2,10 +2,11 @@
 
 
 #include <iostream>
-#include "Vector2.h"
+#include <vector>
 #include <SFML/Graphics.hpp>
 
-#include <vector>
+#include "Vector2.h"
+//#include "TriangleShape.h"
 
 using namespace std;    // apparently it's bad to do namespace std in a header file - how to avoid it though? The class predefinition thing?
 
@@ -21,7 +22,8 @@ private:
     float perceptionRadius;
     float velocityMax;
     float maxAddableForce;
-    sf::CircleShape drawShape;
+    sf::Vertex vertices[3];
+    //TriangleShape drawShape;
 
     void* quadTree;
 public:

@@ -153,6 +153,16 @@ Vector2* Vector2::copy()
 	return new Vector2(x, y);
 }
 
+float Vector2::angleDegrees()
+{
+	if (length() == 0)
+	{
+		return 0.f;
+	}
+
+	return atan(y / x);
+}
+
 const Vector2 Vector2::Vector2Random(const Vector2& min, const Vector2& max)
 {
 	return Vector2(min.x + negMod(rand(), max.x), min.y + negMod(rand(), max.y));

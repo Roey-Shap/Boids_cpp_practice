@@ -5,11 +5,14 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Network.hpp>
+
+#include <random>
+
 #include "Boid.h"
 #include "QuadTree.h"
 #include "Vector2.h"
 #include "CustomMath.h"
-#include <random>
+#include "Fonts.h"
 
 using namespace std;
 
@@ -20,6 +23,13 @@ using namespace std;
 
 int main()
 {
+    sf::Font font_OpenSans;
+    if (!font_OpenSans.loadFromFile(FONT_OPEN_SANS_PATH))
+    {
+        cout << "Couldn't find font :(";
+        return 1;
+    }
+
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Boids", sf::Style::Titlebar | sf::Style::Close);
     window.setFramerateLimit(60);
 
@@ -101,22 +111,23 @@ int main()
             boids[i]->draw(&window, offset);
         }
 
-        /*
-        sf::Color fillColor(0, 0, 255, 255);
-        sf::RectangleShape drawRect(sf::Vector2f(WINDOW_WIDTH, WINDOW_HEIGHT));
-        drawRect.setPosition(0, 0);
-        drawRect.setFillColor(fillColor);
-        drawRect.setOutlineColor(sf::Color::White);
-        drawRect.setOutlineThickness(1);
-        window.draw(drawRect);
-        */
 
-        window.display();
-
+        // Debug information
         currentTime = clock.getElapsedTime();
         fps = 1.0f / (currentTime.asSeconds() - previousTime.asSeconds()); // the asSeconds returns a float
         std::cout << "fps = " << floor(fps) << std::endl; // flooring it will make the frame rate a rounded number
         previousTime = currentTime;
+
+        sf::Text text;
+        text.setFont(font_OpenSans);
+        text.setString("FPS: " + to_string(int(fps)) + "\n" + 
+                        "# Boids: " + to_string(numExistingBoids) + "\n");
+        text.setCharacterSize(24);
+        text.setFillColor(sf::Color::White);
+        text.setPosition(0, 0);
+        window.draw(text);
+
+        window.display();
     }
 
     // call each boid's destructor

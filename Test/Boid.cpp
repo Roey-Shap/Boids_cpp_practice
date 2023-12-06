@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "quadTree.h"
+#include "CustomMath.h"
 
 using namespace std;
 
@@ -19,23 +20,14 @@ Boid::Boid(Vector2 spawnPosition)
     perceptionRadius = 100.0;
     velocityMax = 3.0;
     maxAddableForce = 0.075;
-    sf::CircleShape _drawShape(2.f);
-    drawShape = _drawShape;
-    drawShape.setFillColor(sf::Color::Green);
+    //sf::CircleShape _drawShape(4.f, 3);
+    //drawShape = _drawShape;
+    //drawShape.setFillColor(sf::Color::Green);
 }
 
 Boid::Boid()
 {
-    id = Boid::boidGUIDCounter++;
-    position = Vector2(0, 0);
-    velocity = Vector2(0, 0);
-    acceleration = Vector2(0, 0);
-    perceptionRadius = 100.0;
-    velocityMax = 3.0;
-    maxAddableForce = 0.075;
-    sf::CircleShape _drawShape(2.f);
-    drawShape = _drawShape;
-    drawShape.setFillColor(sf::Color::Green);
+    Boid(Vector2());
 }
 
 void Boid::setPosition(Vector2 position)
@@ -182,7 +174,18 @@ void Boid::step()
 void Boid::draw(sf::RenderWindow* window, const Vector2& offset)
 {
     //cout << position.x + offset.x << ", " << position.y + offset.y << "\n";
-    drawShape.setPosition(sf::Vector2f(position.x + offset.x, position.y + offset.y));
+    //drawShape.setPosition(sf::Vector2f(position.x + offset.x, position.y + offset.y));
 
-    window->draw(drawShape);
+    // define a 100x100 square, red, with a 10x10 texture mapped on it
+
+    float headingAngle = velocity.angleDegrees();
+    for (int i = 0; i < 3; i++)
+    {
+        float rad = i == 0 ? 5 : 3;
+        vertices[i] = getRegularPolygonVertex(position + offset, rad, headingAngle, i, 3);
+    }
+
+    window->draw(vertices, 3, sf::Triangles);
+
+    //window->draw(drawShape);
 }
