@@ -76,14 +76,14 @@ int main()
             {
                 int randNumBoids = randomRange(5, 10);
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-                cout << mousePos.x << ":" << mousePos.y << std::endl;
+                cout << "Mouse pos: " << mousePos.x << ": " << mousePos.y << std::endl;
                 Vector2* mousePosVec = new Vector2(mousePos.x, mousePos.y);
                 Boid* spawnedBoid;
 
                 for (int i = 0; i < randNumBoids; i++)
                 {
                     Vector2 ranPos = *mousePosVec + Vector2::Vector2Random(Vector2(-25), Vector2(25));
-                    spawnedBoid = new Boid(ranPos);
+                    spawnedBoid = new Boid(ranPos, (BoidType) selectedBoidColor);
                     int boidColorIndex = (int)selectedBoidColor;
                     if (selectedBoidColor == boidColor::NUM_ELEMENTS)
                     {
@@ -126,7 +126,7 @@ int main()
 
         for (int i = 0; i < numExistingBoids; i++)
         {
-            quadTree->insertElement(boids[i]);
+            quadTree->insertElement((BoidRepeller*)boids[i]);
         }
         
         bestDistanceToBoid = WINDOW_WIDTH * WINDOW_WIDTH;

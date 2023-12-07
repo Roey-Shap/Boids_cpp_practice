@@ -1,28 +1,12 @@
 
 #include "Boid.h"
-#include "Vector2.h"
-#include <iostream>
-#include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
-
-#include "quadTree.h"
-#include "CustomMath.h"
-
-#include "Simulation.h"
-
 
 using namespace std;
 
-
 int Boid::boidGUIDCounter = 0;
-const sf::Color Boid::boidColors[] = {
-        sf::Color::White,
-        sf::Color::Blue,
-        sf::Color::Red,
-        sf::Color::Green
-};
 
-Boid::Boid(Vector2 spawnPosition)
+
+Boid::Boid(Vector2 spawnPosition, BoidType boidType) : BoidRepeller(spawnPosition)
 {
     id = Boid::boidGUIDCounter++;
     position = spawnPosition;
@@ -32,14 +16,16 @@ Boid::Boid(Vector2 spawnPosition)
     perceptionRadius = 100.0;
     velocityMax = 3.0;
     maxAddableForce = 0.075;
-    //sf::CircleShape _drawShape(4.f, 3);
-    //drawShape = _drawShape;
-    //drawShape.setFillColor(sf::Color::Green);
+    renderDebugText = false;
+
+    quadTree = NULL;
+
+    this->boidType = boidType;
 }
 
-Boid::Boid()
+Boid::Boid() : BoidRepeller()
 {
-    Boid(Vector2());
+    Boid(Vector2(), BoidType::Team1);
 }
 
 void Boid::setPosition(Vector2 position)
@@ -68,33 +54,30 @@ Vector2 Boid::getVelocity()
     return Vector2(velocity.x, velocity.y);
 }
 
-void Boid::setPositionQueryStructure(void* quadTree)
-{
-    this->quadTree = quadTree;
-}
-
 void Boid::detectEdges(Vector2 boundsMin, Vector2 boundsMax)
 {
     position = boundsMin + (position % boundsMax);   
 }
 
 
-Vector2 Boid::alignWithNeighbors(vector<Boid*>* neighbors, int numNeighbors)
+Vector2 Boid::alignWithNeighbors(vector<BoidRepeller*>* neighbors, int numNeighbors)
 {
     Vector2 steerForce = Vector2();
-    int neighborCount = 0;
-    Boid* neighbor;
+    float totalNeighborWeight = 0;
+    float neighborWeight = 0;
+    BoidRepeller* neighbor;
 
     for (int i = 0; i < numNeighbors; i++) {
         neighbor = neighbors->at(i);
         /*float d = (neighbor->position - position).length();*/
-        if (neighbor != this && neighbor->color == color/*&& d < perceptionRadius*/) {
-            steerForce += neighbor->velocity;
-            neighborCount++;
+        if (neighbor != this && neighbor->getBoidType() == boidType/*&& d < perceptionRadius*/) {
+            neighborWeight = getInfluenceFromNeighbor(neighbor);
+            steerForce += (neighbor->velocity) * neighborWeight;
+            totalNeighborWeight += neighborWeight;
         }
     }
-    if (neighborCount > 0) {
-        steerForce /= neighborCount;
+    if (totalNeighborWeight > 0) {
+        steerForce /= totalNeighborWeight;
         steerForce = (steerForce.getNormalized() * velocityMax) - velocity;
         steerForce.clampLength(maxAddableForce);
     }
@@ -102,24 +85,26 @@ Vector2 Boid::alignWithNeighbors(vector<Boid*>* neighbors, int numNeighbors)
     return steerForce;
 }
 
-Vector2 Boid::separateFromNeighbors(vector<Boid*>* neighbors, int numNeighbors)
+Vector2 Boid::separateFromNeighbors(vector<BoidRepeller*>* neighbors, int numNeighbors)
 {
     Vector2 steerForce = Vector2();
-    int neighborCount = 0;
-    Boid* neighbor;
+    float totalNeighborWeight = 0;
+    float neighborWeight = 0;
+    BoidRepeller* neighbor;
     Vector2 deltaPosition;
 
     for (int i = 0; i < numNeighbors; i++) {
         neighbor = neighbors->at(i);
         deltaPosition = neighbor->position - position;
         float d = deltaPosition.length();
-        if (neighbor != this && d > 0 && d < perceptionRadius && neighbor->color == color) {
-            steerForce += deltaPosition / (d * d);
-            neighborCount++;
+        if (neighbor != this && d > 0 /*&& d < perceptionRadius*/ /*&& neighbor->getBoidType() == boidType*/) {
+            neighborWeight = abs(getInfluenceFromNeighbor(neighbor));
+            steerForce += deltaPosition * neighborWeight / (d * d);
+            totalNeighborWeight += neighborWeight;
         }
     }
-    if (neighborCount > 0) {
-        steerForce /= neighborCount;
+    if (totalNeighborWeight > 0) {
+        steerForce /= totalNeighborWeight;
         steerForce = (steerForce.getNormalized() * velocityMax) - velocity;
         steerForce.clampLength(maxAddableForce);
     }
@@ -127,22 +112,24 @@ Vector2 Boid::separateFromNeighbors(vector<Boid*>* neighbors, int numNeighbors)
     return steerForce;
 }
 
-Vector2 Boid::steerTowardsNeighborAverage(vector<Boid*>* neighbors, int numNeighbors)
+Vector2 Boid::steerTowardsNeighborAverage(vector<BoidRepeller*>* neighbors, int numNeighbors)
 {
     Vector2 steerForce = Vector2();
-    int neighborCount = 0;
-    Boid* neighbor;
+    int totalNeighborWeight = 0;  //totalNeighborWeight
+    float neighborWeight = 0;
+    BoidRepeller* neighbor;
 
     for (int i = 0; i < numNeighbors; i++) {
         neighbor = neighbors->at(i);
         //float d = (neighbor->position - position).length();
-        if (neighbor != this && neighbor->color == color/*&& d < perceptionRadius*/) {
-            steerForce += neighbor->position;
-            neighborCount++;
+        if (neighbor != this && neighbor->getBoidType() == boidType/*&& d < perceptionRadius*/) {
+            neighborWeight = getInfluenceFromNeighbor(neighbor);
+            steerForce += (neighbor->position) * neighborWeight;
+            totalNeighborWeight += neighborWeight;
         }
     }
-    if (neighborCount > 0) {
-        steerForce /= neighborCount;
+    if (totalNeighborWeight > 0) {
+        steerForce /= totalNeighborWeight;
         steerForce -= position;
         steerForce = (steerForce.getNormalized() * velocityMax) - velocity;
         steerForce.clampLength(maxAddableForce);
@@ -153,7 +140,7 @@ Vector2 Boid::steerTowardsNeighborAverage(vector<Boid*>* neighbors, int numNeigh
 
 void Boid::flock()
 {
-    vector<Boid*>* quadTreeNeighbors = new vector<Boid*>;
+    vector<BoidRepeller*>* quadTreeNeighbors = new vector<BoidRepeller*>;
     Vector2 sightOffset = Vector2(perceptionRadius/2, perceptionRadius/2);
     ((QuadTree*)quadTree)->queryRegionForElements(quadTreeNeighbors, position - sightOffset, position + sightOffset);
 

@@ -134,7 +134,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Barrier.h" />
     <ClInclude Include="Boid.h" />
+    <ClInclude Include="BoidRepeller.h" />
     <ClInclude Include="CustomMath.h" />
     <ClInclude Include="Fonts.h" />
     <ClInclude Include="QuadTree.h" />
@@ -142,7 +144,9 @@
     <ClInclude Include="Vector2.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Barrier.cpp" />
     <ClCompile Include="Boid.cpp" />
+    <ClCompile Include="BoidRepeller.cpp" />
     <ClCompile Include="CustomMath.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="QuadTree.cpp" />

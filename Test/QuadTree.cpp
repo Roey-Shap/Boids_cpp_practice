@@ -14,7 +14,7 @@ QuadTree::QuadTree(Vector2 topLeft, Vector2 bottomRight)
 	boundaryTopLeft = topLeft;
 	boundaryBottomRight = bottomRight;
 
-	elements = new Boid* [QuadTree::cellSplitThreshold];
+	elements = new BoidRepeller* [QuadTree::cellSplitThreshold];
 	numElements = 0;
 
 	haveDivided = false;
@@ -65,7 +65,7 @@ int QuadTree::getNumElements()
 	return numElements;
 }
 
-Boid** QuadTree::getElements()
+BoidRepeller** QuadTree::getElements()
 {
 	return elements;
 }
@@ -81,7 +81,7 @@ bool QuadTree::getHaveDivided()
 }
 
 
-void QuadTree::insertElement(Boid* element)
+void QuadTree::insertElement(BoidRepeller* element)
 {
 	if (!Vector2::pointInRect(element->getPosition(), boundaryTopLeft, boundaryBottomRight))
 	{
@@ -125,7 +125,7 @@ void QuadTree::subdivide()
 	
 }
 
-void QuadTree::queryRegionForElements(vector<Boid*>* foundElements, Vector2 topLeft, Vector2 bottomRight)
+void QuadTree::queryRegionForElements(vector<BoidRepeller*>* foundElements, Vector2 topLeft, Vector2 bottomRight)
 {
 	if (!Vector2::RectanglesIntersect(boundaryTopLeft, boundaryBottomRight, topLeft, bottomRight))
 	{
@@ -135,7 +135,7 @@ void QuadTree::queryRegionForElements(vector<Boid*>* foundElements, Vector2 topL
 	// add whoever you can see
 	for (int i = 0; i < numElements; i++)
 	{
-		Boid* element = elements[i];
+		BoidRepeller* element = elements[i];
 		if (Vector2::pointInRect(element->getPosition(), topLeft, bottomRight)) {
 			foundElements->push_back(element);
 		}

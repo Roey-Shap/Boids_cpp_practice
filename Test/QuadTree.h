@@ -21,7 +21,7 @@ private:
 	Vector2 boundaryTopLeft;
 	Vector2 boundaryBottomRight;
 
-	Boid** elements;
+	BoidRepeller** elements;
 	int numElements;
 	bool haveDivided;
 	QuadTree* northEast;
@@ -39,11 +39,11 @@ public:
 	int getNumElements();
 	bool getHaveDivided();
 
-	Boid** getElements();
+	BoidRepeller** getElements();
 
-	void queryRegionForElements(vector<Boid*>* elementsFound, Vector2 topLeft, Vector2 bottomRight);
+	void queryRegionForElements(vector<BoidRepeller*>* elementsFound, Vector2 topLeft, Vector2 bottomRight);
 
-	void insertElement(Boid* element);
+	void insertElement(BoidRepeller* element);
 	void subdivide();
 
 	void draw(sf::RenderWindow* window, const Vector2& offset);
