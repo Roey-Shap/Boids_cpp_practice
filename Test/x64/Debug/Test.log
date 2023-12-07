@@ -1,4 +1,16 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(517,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (Test.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  QuadTree.cpp
-C:\Users\Roey Shapiro\Desktop\Programming\cpp\Test\Test\Test\QuadTree.cpp(163,52): warning C4244: 'argument': conversion from 'double' to 'sf::Uint8', possible loss of data
+  main.cpp
+C:\Users\Roey Shapiro\Desktop\Programming\cpp\Test\Test\Test\Simulation.h(8,2): warning C4091: 'extern ': ignored on left of 'Simulation' when no variable is declared
+C:\Users\Roey Shapiro\Desktop\Programming\cpp\Test\Test\Test\Boid.h(21,2): warning C4091: 'extern ': ignored on left of 'boidColor' when no variable is declared
+C:\Users\Roey Shapiro\Desktop\Programming\cpp\Test\Test\Test\main.cpp(44,40): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\Roey Shapiro\Desktop\Programming\cpp\Test\Test\Test\main.cpp(80,72): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=int
+          ]
+C:\Users\Roey Shapiro\Desktop\Programming\cpp\Test\Test\Test\main.cpp(80,60): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=int
+          ]
   Test.vcxproj -> C:\Users\Roey Shapiro\Desktop\Programming\cpp\Test\Test\x64\Debug\TestBoids.exe

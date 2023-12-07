@@ -5,6 +5,8 @@
 #include "Vector2.h";
 #include <iostream>
 
+static const float pi = 3.141592654f;
+
 float roundTo(float value, float snapValue)
 {
     return (roundf(value / snapValue) * snapValue);
@@ -32,7 +34,7 @@ float map(float min1, float max1, float value, float min2, float max2)
 float negMod(float x, float y)
 {
     float remainder = fmodf(x, y);
-    remainder = remainder > 0 ? remainder : y + remainder;
+    remainder = remainder >= 0 ? remainder : y + remainder;
     return remainder;
 }
 
@@ -46,13 +48,17 @@ int randomRange(int min, int max)
     return min + negMod(rand(), max);
 }
 
-sf::Vertex getRegularPolygonVertex(const Vector2& center, float radius, float offsetAngle, int index, int totalPoints)
+sf::Vertex getRegularPolygonVertex(const Vector2& center, float radius, float offsetAngle, int index, int totalPoints, sf::Color color)
 {
-    static const float pi = 3.141592654f;
 
     float angle = offsetAngle + (index * 2 * pi / totalPoints);
     float x = cos(angle) * radius;
     float y = sin(angle) * radius;
 
-    return sf::Vertex(sf::Vector2f(center.x + x, center.y + y), sf::Color::White);
+    return sf::Vertex(sf::Vector2f(center.x + x, center.y + y), color);
+}
+
+int sign(float x)
+{
+    return signbit(x) ? -1 : 1;
 }

@@ -135,19 +135,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Boid.h" />
-    <ClInclude Include="classTest.h" />
     <ClInclude Include="CustomMath.h" />
     <ClInclude Include="Fonts.h" />
     <ClInclude Include="QuadTree.h" />
-    <ClInclude Include="TriangleShape.h" />
+    <ClInclude Include="Simulation.h" />
     <ClInclude Include="Vector2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Boid.cpp" />
-    <ClCompile Include="classTest.cpp" />
     <ClCompile Include="CustomMath.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="QuadTree.cpp" />
+    <ClCompile Include="SFML_Text.cpp" />
+    <ClCompile Include="SFML_Text.h" />
+    <ClCompile Include="Simulation.cpp" />
     <ClCompile Include="Vector2.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

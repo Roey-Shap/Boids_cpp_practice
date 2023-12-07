@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="classTest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Boid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -33,14 +30,11 @@
     <ClInclude Include="Fonts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TriangleShape.h">
+    <ClInclude Include="Simulation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="classTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -54,6 +48,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="QuadTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SFML_Text.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SFML_Text.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Simulation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -3,18 +3,30 @@
 #include "Vector2.h"
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 
 #include "quadTree.h"
 #include "CustomMath.h"
 
+#include "Simulation.h"
+
+
 using namespace std;
 
+
 int Boid::boidGUIDCounter = 0;
+const sf::Color Boid::boidColors[] = {
+        sf::Color::White,
+        sf::Color::Blue,
+        sf::Color::Red,
+        sf::Color::Green
+};
 
 Boid::Boid(Vector2 spawnPosition)
 {
     id = Boid::boidGUIDCounter++;
     position = spawnPosition;
+    prevPosition = spawnPosition;
     velocity = Vector2(0, 0);
     acceleration = Vector2(0, 0);
     perceptionRadius = 100.0;
@@ -51,6 +63,11 @@ void Boid::setVelocity(Vector2 velocity)
     this->velocity = velocity;
 }
 
+Vector2 Boid::getVelocity()
+{
+    return Vector2(velocity.x, velocity.y);
+}
+
 void Boid::setPositionQueryStructure(void* quadTree)
 {
     this->quadTree = quadTree;
@@ -70,8 +87,8 @@ Vector2 Boid::alignWithNeighbors(vector<Boid*>* neighbors, int numNeighbors)
 
     for (int i = 0; i < numNeighbors; i++) {
         neighbor = neighbors->at(i);
-        float d = (neighbor->position - position).length();
-        if (neighbor != this && d < perceptionRadius) {
+        /*float d = (neighbor->position - position).length();*/
+        if (neighbor != this && neighbor->color == color/*&& d < perceptionRadius*/) {
             steerForce += neighbor->velocity;
             neighborCount++;
         }
@@ -96,7 +113,7 @@ Vector2 Boid::separateFromNeighbors(vector<Boid*>* neighbors, int numNeighbors)
         neighbor = neighbors->at(i);
         deltaPosition = neighbor->position - position;
         float d = deltaPosition.length();
-        if (neighbor != this && d > 0 && d < perceptionRadius) {
+        if (neighbor != this && d > 0 && d < perceptionRadius && neighbor->color == color) {
             steerForce += deltaPosition / (d * d);
             neighborCount++;
         }
@@ -115,12 +132,11 @@ Vector2 Boid::steerTowardsNeighborAverage(vector<Boid*>* neighbors, int numNeigh
     Vector2 steerForce = Vector2();
     int neighborCount = 0;
     Boid* neighbor;
-    Vector2 deltaPosition;
 
     for (int i = 0; i < numNeighbors; i++) {
         neighbor = neighbors->at(i);
-        float d = (neighbor->position - position).length();
-        if (neighbor != this && d < perceptionRadius) {
+        //float d = (neighbor->position - position).length();
+        if (neighbor != this && neighbor->color == color/*&& d < perceptionRadius*/) {
             steerForce += neighbor->position;
             neighborCount++;
         }
@@ -161,14 +177,22 @@ void Boid::flock()
 
 void Boid::step()
 {
-    //position = (position + Vector2(1, 1)) % Vector2(100, 100);
-    position += velocity;
-    velocity += acceleration;
+    prevPosition = *(position.copy());
+    position += velocity * Simulation::deltaTime;
+    velocity += acceleration * Simulation::deltaTime * Simulation::deltaTime;
     velocity.clampLength(velocityMax);
     acceleration *= 0;
 
     float buffer = 0;
     detectEdges(Vector2(buffer, buffer), Vector2(800 - buffer, 800 - buffer));
+
+    /*bool mouseIsClose = (Vector2(sf::Mouse::getPosition()) - position).length() <= 10;
+    setRenderDebugText(mouseIsClose);*/
+}
+
+void Boid::setRenderDebugText(bool active)
+{
+    renderDebugText = active;
 }
 
 void Boid::draw(sf::RenderWindow* window, const Vector2& offset)
@@ -178,11 +202,14 @@ void Boid::draw(sf::RenderWindow* window, const Vector2& offset)
 
     // define a 100x100 square, red, with a 10x10 texture mapped on it
 
-    float headingAngle = velocity.angleDegrees();
+    float headingAngle = (position - prevPosition).angleDegrees();
+
     for (int i = 0; i < 3; i++)
     {
-        float rad = i == 0 ? 5 : 3;
-        vertices[i] = getRegularPolygonVertex(position + offset, rad, headingAngle, i, 3);
+        float rad = 3 * (i == 0 ? 5 : 3);
+        int colorIndex = (int)color;
+        sf::Vertex vertex = getRegularPolygonVertex(position + offset, rad, headingAngle, i, 3, Boid::boidColors[colorIndex]);
+        vertices[i] = vertex;
     }
 
     window->draw(vertices, 3, sf::Triangles);

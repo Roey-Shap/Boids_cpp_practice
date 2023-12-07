@@ -31,7 +31,10 @@ QuadTree::QuadTree()
 
 QuadTree::~QuadTree()
 {
-	delete[] elements;
+	/*if (elements != NULL)
+	{
+		delete[] elements;		// do I need to do this manually? Seems not... at least not according to the memory profiler
+	}*/
 
 	if (haveDivided)
 	{

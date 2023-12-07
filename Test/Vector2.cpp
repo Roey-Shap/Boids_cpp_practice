@@ -1,6 +1,10 @@
 #include "Vector2.h"
+#include "CustomMath.h"
 #include <math.h>
 #include <random>
+#include <SFML/Graphics.hpp>
+
+static const int pi = 3.141592654f;
 
 using namespace std;
 
@@ -25,6 +29,19 @@ Vector2::Vector2()
 {
 	x = 0.0;
 	y = 0.0;
+}
+
+
+Vector2::Vector2(sf::Vector2f v)
+{
+	x = v.x;
+	y = v.y;
+}
+
+Vector2::Vector2(sf::Vector2i v)
+{
+	x = v.x;
+	y = v.y;
 }
 
 Vector2 Vector2::operator+(const Vector2& other)
@@ -153,14 +170,35 @@ Vector2* Vector2::copy()
 	return new Vector2(x, y);
 }
 
+float Vector2::dot(Vector2 other)
+{
+	return (x * other.x) + (y * other.y);
+}
+
 float Vector2::angleDegrees()
 {
 	if (length() == 0)
 	{
 		return 0.f;
 	}
+	
+	float rawAngle = atan(-abs(y)/abs(x));
+	int signX = sign(x);
+	int signY = sign(y);
+	if (signX > 0 && signY > 0)
+	{
+		rawAngle = (2 * pi) - rawAngle;
+	}
+	else if (signX < 0 && signY > 0)
+	{
+		rawAngle += pi;
+	}
+	else if (signX < 0 && signY < 0)
+	{
+		rawAngle = 180 - rawAngle;
+	}
 
-	return atan(y / x);
+	return rawAngle;
 }
 
 const Vector2 Vector2::Vector2Random(const Vector2& min, const Vector2& max)
@@ -177,4 +215,9 @@ bool Vector2::RectanglesIntersect(Vector2 topLeft1, Vector2 bottomRight1, Vector
 {
 	return topLeft1.x <= bottomRight2.x && bottomRight1.x >= topLeft2.x 
 		&& topLeft1.y <= bottomRight2.y && bottomRight1.y >= topLeft2.y;
+}
+
+std::string Vector2::toString()
+{
+	return "x: " + to_string(x) + ", y:" + to_string(y);
 }
