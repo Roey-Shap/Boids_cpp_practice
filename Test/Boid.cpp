@@ -13,7 +13,7 @@ Boid::Boid(Vector2 spawnPosition, BoidType boidType) : BoidRepeller(spawnPositio
     prevPosition = spawnPosition;
     velocity = Vector2(0, 0);
     acceleration = Vector2(0, 0);
-    perceptionRadius = 100.0;
+    perceptionRadius = 200.0;
     velocityMax = 3.0;
     maxAddableForce = 0.075;
     renderDebugText = false;
@@ -70,7 +70,7 @@ Vector2 Boid::alignWithNeighbors(vector<BoidRepeller*>* neighbors, int numNeighb
     for (int i = 0; i < numNeighbors; i++) {
         neighbor = neighbors->at(i);
         /*float d = (neighbor->position - position).length();*/
-        if (neighbor != this && neighbor->getBoidType() == boidType/*&& d < perceptionRadius*/) {
+        if (neighbor != this/*&& d < perceptionRadius*/) {
             neighborWeight = getInfluenceFromNeighbor(neighbor);
             steerForce += (neighbor->velocity) * neighborWeight;
             totalNeighborWeight += neighborWeight;
@@ -122,7 +122,7 @@ Vector2 Boid::steerTowardsNeighborAverage(vector<BoidRepeller*>* neighbors, int 
     for (int i = 0; i < numNeighbors; i++) {
         neighbor = neighbors->at(i);
         //float d = (neighbor->position - position).length();
-        if (neighbor != this && neighbor->getBoidType() == boidType/*&& d < perceptionRadius*/) {
+        if (neighbor != this/*&& d < perceptionRadius*/) {
             neighborWeight = getInfluenceFromNeighbor(neighbor);
             steerForce += (neighbor->position) * neighborWeight;
             totalNeighborWeight += neighborWeight;
@@ -155,9 +155,10 @@ void Boid::flock()
     //cohesion.mult(cohesionSlider.value());
     //separation.mult(separationSlider.value());
 
-    acceleration += alignment * 0.3;
-    acceleration += cohesion * 0.8;
-    acceleration -= separation * 0.8;
+    float factor = 2.0;
+    acceleration += alignment * 0.3 * factor;
+    acceleration += cohesion * 0.8 * factor;
+    acceleration -= separation * 0.85 * factor;
 
     delete quadTreeNeighbors;
 }
@@ -200,6 +201,4 @@ void Boid::draw(sf::RenderWindow* window, const Vector2& offset)
     }
 
     window->draw(vertices, 3, sf::Triangles);
-
-    //window->draw(drawShape);
 }

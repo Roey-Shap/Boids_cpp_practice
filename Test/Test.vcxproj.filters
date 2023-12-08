@@ -71,5 +71,11 @@
     <ClCompile Include="Barrier.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MouseBoid.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MouseBoid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

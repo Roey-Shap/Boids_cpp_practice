@@ -10,6 +10,7 @@ extern enum BoidType
 	Team4,
 	NUM_TEAMS,
 	NoTeam,
+	AllTeams,
 
 	NUM_VALUES
 };
@@ -42,5 +43,5 @@ public:
 	BoidRepeller(Vector2 position);
 
 	static const sf::Color boidColors[(int)boidColor::NUM_ELEMENTS];
-	static const float entityInfluences[BoidType::NUM_TEAMS][BoidType::NUM_TEAMS];
+	static const float entityInfluences[BoidType::NUM_TEAMS + 2][BoidType::NUM_TEAMS + 2];
 };

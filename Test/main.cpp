@@ -9,6 +9,7 @@
 #include <random>
 
 #include "Boid.h"
+#include "MouseBoid.h"
 #include "QuadTree.h"
 #include "Vector2.h"
 #include "CustomMath.h"
@@ -56,9 +57,14 @@ int main()
 
     Boid* nearestBoid;
     float bestDistanceToBoid = WINDOW_WIDTH * WINDOW_WIDTH;
+
     const Vector2& offset = Vector2(0, 0);
-    float fps;
     static boidColor selectedBoidColor = (boidColor)0;
+
+    MouseBoid* mouseBoid = new MouseBoid();
+    sf::Mouse::Button lastButtonPressed = sf::Mouse::Button::Middle;
+
+    float fps;
     sf::Clock clock = sf::Clock::Clock();
     sf::Time previousTime = clock.getElapsedTime();
     sf::Time currentTime;
@@ -74,28 +80,34 @@ int main()
             }
             else if (event.type == sf::Event::MouseButtonReleased)
             {
-                int randNumBoids = randomRange(5, 10);
-                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-                cout << "Mouse pos: " << mousePos.x << ": " << mousePos.y << std::endl;
-                Vector2* mousePosVec = new Vector2(mousePos.x, mousePos.y);
-                Boid* spawnedBoid;
-
-                for (int i = 0; i < randNumBoids; i++)
+                if (lastButtonPressed == sf::Mouse::Left)
                 {
-                    Vector2 ranPos = *mousePosVec + Vector2::Vector2Random(Vector2(-25), Vector2(25));
-                    spawnedBoid = new Boid(ranPos, (BoidType) selectedBoidColor);
-                    int boidColorIndex = (int)selectedBoidColor;
-                    if (selectedBoidColor == boidColor::NUM_ELEMENTS)
+                    int randNumBoids = randomRange(5, 10);
+                    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                    cout << "Mouse pos: " << mousePos.x << ": " << mousePos.y << std::endl;
+                    Vector2* mousePosVec = new Vector2(mousePos.x, mousePos.y);
+                    Boid* spawnedBoid;
+
+                    for (int i = 0; i < randNumBoids; i++)
                     {
-                        boidColorIndex = randomRange(0, boidColor::NUM_ELEMENTS);
+                        Vector2 ranPos = *mousePosVec + Vector2::Vector2Random(Vector2(-25), Vector2(25));
+                        int boidColorIndex = (int)selectedBoidColor;
+                        if (selectedBoidColor == boidColor::NUM_ELEMENTS)
+                        {
+                            boidColorIndex = randomRange(0, boidColor::NUM_ELEMENTS);
+                        }
+                        spawnedBoid = new Boid(ranPos, (BoidType)boidColorIndex);
+                        spawnedBoid->color = (boidColor)boidColorIndex;
+                        boids[numExistingBoids + i] = spawnedBoid;
+                        spawnedBoid->detectEdges(Vector2(0, 0), Vector2(WINDOW_WIDTH, WINDOW_HEIGHT));
                     }
 
-                    spawnedBoid->color = (boidColor)boidColorIndex;
-                    boids[numExistingBoids + i] = spawnedBoid;
-                    spawnedBoid->detectEdges(Vector2(0, 0), Vector2(WINDOW_WIDTH, WINDOW_HEIGHT));
+                    numExistingBoids += randNumBoids;
                 }
-
-                numExistingBoids += randNumBoids;
+                else if (lastButtonPressed == sf::Mouse::Right)
+                {
+                    mouseBoid->setAttractor(!mouseBoid->getAttractor());
+                }
             }
             else if (event.type == sf::Event::MouseWheelMoved)
             {
@@ -115,6 +127,15 @@ int main()
             }
         }
 
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        {
+            lastButtonPressed = sf::Mouse::Left;
+        }
+        else if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+        {
+            lastButtonPressed = sf::Mouse::Right;
+        }
+
         window.clear();
 
         if (quadTree != NULL)
@@ -122,12 +143,16 @@ int main()
             delete quadTree;
         }
 
+        mouseBoid->setPosition(Vector2(sf::Mouse::getPosition(window)));
+
         quadTree = new QuadTree(Vector2(0, 0), Vector2(WINDOW_WIDTH, WINDOW_HEIGHT));
 
         for (int i = 0; i < numExistingBoids; i++)
         {
             quadTree->insertElement((BoidRepeller*)boids[i]);
         }
+
+        quadTree->insertElement((BoidRepeller*)mouseBoid);
         
         bestDistanceToBoid = WINDOW_WIDTH * WINDOW_WIDTH;
         nearestBoid = NULL;
@@ -156,6 +181,7 @@ int main()
             boids[i]->draw(&window, offset);
         }
 
+        mouseBoid->draw(&window, offset);
 
         // Debug information
         if (Simulation::showDebugInfo)
@@ -203,6 +229,8 @@ int main()
     }
 
     delete quadTree;
+
+    delete mouseBoid;
 
     return 0;
 }

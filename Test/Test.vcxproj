@@ -149,6 +149,8 @@
     <ClCompile Include="BoidRepeller.cpp" />
     <ClCompile Include="CustomMath.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MouseBoid.cpp" />
+    <ClCompile Include="MouseBoid.h" />
     <ClCompile Include="QuadTree.cpp" />
     <ClCompile Include="SFML_Text.cpp" />
     <ClCompile Include="SFML_Text.h" />

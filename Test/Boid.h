@@ -47,7 +47,7 @@ public:
     void flock();
     void step();
 
-    void draw(sf::RenderWindow* window, const Vector2& offset);
+    virtual void draw(sf::RenderWindow* window, const Vector2& offset);
 
     Boid(Vector2 spawnPosition, BoidType boidType);
     Boid();

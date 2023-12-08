@@ -1,11 +1,14 @@
 
 #include "BoidRepeller.h"
 
-const float BoidRepeller::entityInfluences[BoidType::NUM_TEAMS][BoidType::NUM_TEAMS] = {
-		{1    , 0.25 , 0.25 , 0.25 },	// White
-		{0    , 1    , 0.5  , 0    },	// Blue
-		{0    , 0.25 , 1    , -1   },	// Red
-		{-1   , -1   , -1   , 1    }	// Green
+// sort of works, but would probably be far more effective with a matrix for each of cohesion, separation, and alignment
+const float BoidRepeller::entityInfluences[BoidType::NUM_TEAMS + 2][BoidType::NUM_TEAMS + 2] = {
+		{1    , 0.25 , 0.25 , 0.25   , -10  ,  1},	// White
+		{0    , 1    , 0.5  , 0      , -10  ,  1},	// Blue
+		{0    , 0.25 , 1    , -10    , -10  ,  1},	// Red
+		{-10   , -10   , -10   , 1   , -10  ,  1},	// Green
+		{0,    0,     0,     0       ,  0  ,  0},	//Repeller
+		{0,    0,     0,     0       ,  0  ,  0}	//Attractor
 };
 
 
